@@ -67,6 +67,10 @@ func main() {
 		line_list := s.Split(line, ",")
 		if isFloat(line_list[0]) {
 			for i := 0; i < len(arclength); i++ {
+				if arclength[i] == "-0.003000668" {
+					row := line_list[0] + " " + "0.0" + " " + line_list[i+1] + " 0 0 0 " + speed[i] + "\n"
+					dbuffer = append(dbuffer, row)
+				}
 				row := line_list[0] + " " + arc_length[i] + " " + line_list[i+1] + " 0 0 0 " + speed[i] + "\n"
 				dbuffer = append(dbuffer, row)
 			}
