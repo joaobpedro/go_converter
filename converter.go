@@ -22,7 +22,7 @@ func isFloat(a string) bool {
 }
 
 func arc_length_translate(a []string) []string {
-
+	// function to offset the data by 19.4m
 	var b []string
 
 	for _, word := range a {
@@ -33,6 +33,15 @@ func arc_length_translate(a []string) []string {
 		b = append(b, word_added)
 	}
 	return b
+}
+
+func change_units(s string) string {
+	// change the units in the density word
+	val, err := strconv.ParseFloat(s, 64)
+	check(err)
+	val = val / 1000.0
+	s2 := strconv.FormatFloat(val, 'f', -1, 64)
+	return s2
 }
 
 func main() {
@@ -56,7 +65,7 @@ func main() {
 			arclength = s.Split(line, ",")[1:]
 		}
 
-		if s.Contains(line, "Correlation") {
+		if s.Contains(line, "Correlation") || s.Contains(line, "Average Volume") {
 			speed = s.Split(line, ",")[1:]
 		}
 
@@ -68,10 +77,10 @@ func main() {
 		if isFloat(line_list[0]) {
 			for i := 0; i < len(arclength); i++ {
 				if arclength[i] == "-0.003000668" {
-					row := line_list[0] + " " + "0.0" + " " + line_list[i+1] + " 0 0 0 " + speed[i] + "\n"
+					row := line_list[0] + " " + "0.0" + " " + change_units(line_list[i+1]) + " 0 0 0 " + speed[i] + "\n"
 					dbuffer = append(dbuffer, row)
 				}
-				row := line_list[0] + " " + arc_length[i] + " " + line_list[i+1] + " 0 0 0 " + speed[i] + "\n"
+				row := line_list[0] + " " + arc_length[i] + " " + change_units(line_list[i+1]) + " 0 0 0 " + speed[i] + "\n"
 				dbuffer = append(dbuffer, row)
 			}
 		}
