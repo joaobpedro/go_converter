@@ -6,6 +6,7 @@ import (
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
+	"image/color"
 	"os"
 	"strconv"
 	s "strings"
@@ -41,6 +42,7 @@ func main() {
 	f, err := os.Open(args[1])
 	check(err)
 	defer f.Close()
+	fmt.Println(fileprefix)
 
 	scanner := bufio.NewScanner(f)
 
@@ -59,7 +61,7 @@ func main() {
 		density = append(density, s.Split(line, " ")[2])
 	}
 
-	const location float64 = 1023.576628 // this values needs to be changes
+	const location float64 = 1200.974036 // this values needs to be changes
 	// now loop through the arclength data take the TDP location
 
 	var time_plot []float64
@@ -89,7 +91,9 @@ func main() {
 		pts[i].Y = densityplot[i]
 	}
 
-	filtered_data := pts[2000:3500]
+	// fmt.Println(pts)
+
+	filtered_data := pts[5000:5500]
 
 	plt := plot.New()
 	plt.Title.Text = "Density Variation at TDP" + fileprefix
@@ -101,6 +105,7 @@ func main() {
 
 	l, err3 := plotter.NewLine(pts)
 	check(err3)
+	l.Color = color.RGBA{B: 255, A: 255}
 
 	_ = sct
 	// plt.Add(sct)
@@ -110,31 +115,20 @@ func main() {
 
 	plt2 := plot.New()
 	plt2.Title.Text = "Filtered view of Density at TDP" + fileprefix
-	plt2.X.Label.Text = "Time,s"
+	plt2.X.Label.Text = "Time, s"
 	plt2.Y.Label.Text = "Density, Te/m3"
 
-	sct2, err4 := plotter.NewScatter(filtered_data)
-	check(err4)
+	// sct2, err4 := plotter.NewScatter(filtered_data)
+	// check(err4)
 	l2, err5 := plotter.NewLine(filtered_data)
 	check(err5)
+	l2.Color = color.RGBA{B: 255, A: 255}
 
-	plt2.Add(sct2)
+	// plt2.Add(sct2)
 	plt2.Add(l2)
 
 	err6 := plt2.Save(7*vg.Inch, 4*vg.Inch, fileprefix+"_filtered.svg")
 	check(err6)
 
-	// code below is to illustrate a secondary axis thing
-
-	// plt3 := plot.New()
-	// test_scatter, err := plotter.NewScatter(pts)
-	// check(err)
-	// plt3.Add(test_scatter)
-
-	// test_scatter2, err := plotter.NewScatter(filtered_data)
-	// check(err)
-	// test_scatter2.YAxisName = "secondary"
-	// plt3.Add(test_scatter2)
-	// err9 := plt3.Save(7*vg.Inch, 4*vg.Inch, "test.svg")
-	// check(err9)
+	fmt.Println("finished plotting")
 }
